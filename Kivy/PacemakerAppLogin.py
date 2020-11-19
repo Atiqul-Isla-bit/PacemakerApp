@@ -26,10 +26,7 @@ kv = Builder.load_file("pacemakerlogin.kv")
 
 ## Serial Details
 
-pacemaker_serial = serial.Serial(port="COM#", baudrate=...,timeout=...)
-
-
-
+#pacemaker_serial = serial.Serial(port="COM#", baudrate=...,timeout=...)
 
 
 
@@ -246,7 +243,14 @@ class MainWindow(Screen):
         popupWindow = Popup(title="Programmable Parameters", content=show,size_hint=(None,None), size=(500,500))
         popupWindow.open()
     
+    ## Saves the parameter data into the user_data.txt file to deploy in the future
+    def deploy(self):
+        self.file = open("user_data.txt", "w")
+        self.data = {}
+        self.file.write( self.currentUsername + ";" + URL + ";" + LRL + ";" + AtrAmp + ";" + VentAmp + ";" + AtrPulseWidth + ";" + VentPulseWidth + ";" + VRP + ";" + ARP + "\n")
+        self.file.close()
 
+    
 
 ## Declare all Popups Layout Classes ----------------------------------------------------------------------
 
@@ -289,21 +293,69 @@ class textInputPopup(FloatLayout):
         num = self.inputField.text
 
         if index == 1:
-            setLRL(num)
+            if int(num) > 150 or int(num) < 40:
+                show = errorPopup()
+                global popupWindow
+                popupWindow = Popup(title="Input Error", content=show,size_hint=(None,None), size=(300,200))
+                popupWindow.open()
+            else:
+                setLRL(num)
+
         elif index == 2:
-            setURL(num)
+            if int(num) > 150 or int(num) < 60:
+                show = errorPopup()
+                popupWindow = Popup(title="Input Error", content=show,size_hint=(None,None), size=(300,200))
+                popupWindow.open()
+            else:
+                setURL(num)
+
         elif index == 3:
-            setAtrAmp(num)
+            if int(num) > 5 or int(num) < 0:
+                show = errorPopup()
+                popupWindow = Popup(title="Input Error", content=show,size_hint=(None,None), size=(300,200))
+                popupWindow.open()
+            else:
+                setAtrAmp(num)
+
         elif index == 4:
-            setAtrPulseWidth(num)
+            if float(num) > 100 or float(num) < 0:
+                show = errorPopup()
+                popupWindow = Popup(title="Input Error", content=show,size_hint=(None,None), size=(300,200))
+                popupWindow.open()
+            else:
+                setAtrPulseWidth(num)
+
         elif index == 5:
-            setARP(num)
+            if float(num) > 600 or float(num) < 0:
+                show = errorPopup()
+                popupWindow = Popup(title="Input Error", content=show,size_hint=(None,None), size=(300,200))
+                popupWindow.open()
+            else:
+                setARP(num)
+
         elif index == 6:
-            setVentAmp(num)
+            if int(num) > 5 or int(num) < 0:
+                show = errorPopup()
+                popupWindow = Popup(title="Input Error", content=show,size_hint=(None,None), size=(300,200))
+                popupWindow.open()
+            else:
+                 setVentAmp(num)
+
         elif index == 7:
-            setVentPulseWidth(num)
+            if float(num) > 100 or float(num) < 0:
+                show = errorPopup()
+                popupWindow = Popup(title="Input Error", content=show,size_hint=(None,None), size=(300,200))
+                popupWindow.open()
+            else:
+                  setVentPulseWidth(num)
+
         elif index == 8:
-            setVRP(num)
+            if float(num) > 600 or float(num) < 0:
+                show = errorPopup()
+                popupWindow = Popup(title="Input Error", content=show,size_hint=(None,None), size=(300,200))
+                popupWindow.open()
+            else:
+                  setVRP(num)
 
     def closePopup(self):
         popupWindow_editParameter.dismiss()
@@ -464,8 +516,18 @@ else:
     f.close()
     print("no file found, new file was created")
 
+if(os.path.isfile("user_data.txt")):
+    print("file located successfuly")
+else:
+    f = open("user_data.txt", "w")
+    f.close()
+    print("no file found, new file was created")
+
 ## Load the database
 userDatabase = Database("saved_users.txt")
+
+## If a new database class needs to be created 
+#parameterDatabase = paramDatabase("user_data.txt")
 
 
 ## Run the App ----------------------------------------------------------------------
